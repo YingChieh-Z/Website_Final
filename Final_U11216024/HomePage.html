@@ -1,0 +1,263 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href = "CSS_HomePage.css">
+        <title>二元一次方程式學習網頁</title>
+        <script>
+            window.onload = function(){
+                var UserName = document.getElementById("UserName");
+                UserName.innerHTML = localStorage.getItem("username");
+                
+                // 讀取進度比例
+                const progressRate = localStorage.getItem("progress_rate");
+                // 若無儲存進度，則預設為 0%
+                let progress = progressRate ? parseInt(progressRate) : 0;
+            
+                // 更新進度
+                updateProgress(progress);
+
+                // 更新進度條
+                updateProgressBar(progress);
+
+                initializeLevels();
+            }
+
+            // 使用者大頭貼和文字的選單
+            document.addEventListener('DOMContentLoaded', () => {
+                const userMenu = document.querySelector('.user-menu');
+                const menu = document.querySelector('.user-menu .menu');
+
+                let timer;
+
+                userMenu.addEventListener("mouseenter", () => {
+                    clearTimeout(timer);
+                    menu.style.display = "block";
+                });
+
+                userMenu.addEventListener("mouseleave", () => {
+                    timer = setTimeout(() => {
+                        menu.style.display = "none";
+                    }, 200); // 延遲 200ms 防止不穩定
+                });
+
+                menu.addEventListener("mouseenter", () => {
+                    clearTimeout(timer);
+                    menu.style.display = "block";
+                });
+
+                menu.addEventListener("mouseleave", () => {
+                    timer = setTimeout(() => {
+                        menu.style.display = "none";
+                    }, 200);
+                });
+            });
+            
+            // 登出
+            function leave(){
+                var confirmLogout = confirm("你確定要登出嗎?"); 
+                if(confirmLogout) {
+                    window.location.href = "Login.html"; 
+                }
+            }
+
+            // 模態視窗顯示與關閉（隱藏）
+            function showModal1() {
+                document.getElementById("Modal1").style.display = "flex"; 
+            }
+
+            function closeModal1() {
+                document.getElementById("Modal1").style.display = "none"; 
+            }
+
+            function showModal2() {
+                document.getElementById("Modal2").style.display = "flex";
+            }
+
+            function closeModal2() {
+                document.getElementById("Modal2").style.display = "none";
+            }
+
+            // 初始化所有關卡狀態
+            function initializeLevels() {
+                const nodes = document.querySelectorAll(".node");
+                const lines = document.querySelectorAll(".line");
+
+                // 鎖定所有節點
+                nodes.forEach((node, index) => {
+                    if (node.classList.contains("completed")) {
+                        // 已完成的節點
+                        node.style.pointerEvents = "auto";
+                    } else if (index === 0 || node.classList.contains("active")) {
+                        // 第一個節點或活躍節點
+                        node.style.pointerEvents = "auto";
+                        node.classList.add("active");
+                    } else {
+                        // 其他節點鎖定
+                        node.style.pointerEvents = "none";
+                        node.classList.remove("active");
+                    }
+                });
+
+                // 隱藏或顯示連接線
+                lines.forEach((line) => {
+                    if (line.classList.contains("active-line")) {
+                        line.style.display = "block";
+                    } else {
+                        line.style.display = "none";
+                    }
+                });
+            }
+
+            function updateProgress(progress) {
+                localStorage.setItem("progress", progress); // 保存進度
+                const nodes = document.querySelectorAll(".node");
+                const lines = document.querySelectorAll(".line");
+                const progressBar = document.getElementById("ProgressBar");
+                const progressPercentage = document.getElementById("ProgressPercentage");
+
+                // 更新節點與連接線狀態
+                nodes.forEach((node, index) => {
+                    if (progress >= (index + 1) * 20) {
+                        node.style.pointerEvents = "auto"; // 解鎖節點
+                        node.classList.remove("locked");
+                        node.classList.add("completed");
+                        if (index > 0) lines[index - 1].classList.add("active-line");
+                    } else if (progress >= index * 20) {
+                        node.style.pointerEvents = "auto"; // 解鎖節點
+                        node.classList.remove("locked");
+                        node.classList.add("active");
+                    } else {
+                        node.style.pointerEvents = "none"; // 鎖定節點
+                        node.classList.add("locked");
+                    }
+                });
+
+                // 更新進度條寬度
+                progressBar.style.width = progress + "%";
+
+                // 更新百分比文字
+                progressPercentage.innerText = progress + "%";
+
+                // 判斷是否為100%
+                if (progress >= 100) {
+                    progressBar.classList.add("full"); // 添加 full 類
+                } 
+                else {
+                    progressBar.classList.remove("full"); // 移除 full 類（非100%情況）
+                }
+
+                // 根據進度解鎖關卡
+                if (progress >= 20) {
+                    document.querySelector(".node-2").style.pointerEvents = "auto";
+                    document.querySelector(".node-2").classList.add("active");
+                    document.querySelector(".line-1").classList.add("active-line");
+                    document.querySelector(".node-1").classList.add("completed");
+                }
+                if (progress >= 40) {
+                    document.querySelector(".node-3").style.pointerEvents = "auto";
+                    document.querySelector(".node-3").classList.add("active");
+                    document.querySelector(".line-2").classList.add("active-line");
+                    document.querySelector(".node-2").classList.add("completed");
+                }
+                if (progress >= 60) {
+                    document.querySelector(".node-4").style.pointerEvents = "auto";
+                    document.querySelector(".node-4").classList.add("active");
+                    document.querySelector(".line-3").classList.add("active-line");
+                    document.querySelector(".node-3").classList.add("completed");
+                }
+                if (progress >= 80) {
+                    document.querySelector(".node-5").style.pointerEvents = "auto";
+                    document.querySelector(".node-5").classList.add("active");
+                    document.querySelector(".line-4").classList.add("active-line");
+                    document.querySelector(".node-4").classList.add("completed");
+                }
+                if (progress >= 100) {
+                    document.querySelector(".node-5").classList.add("completed");
+                }
+            }
+
+            function updateProgressBar(progress) {
+                const progressBar = document.getElementById("ProgressBar");
+
+                // 設定進度條寬度（比例）
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                    progressBar.style.backgroundColor = "#a1f5d7"; // 設定進度條顏色
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>二元一次方程式</h1>
+            <div class="header-right">
+                <div class="progress-bar-container-wrapper">
+                    <span class="progress-label">學習進度：</span> <!-- 新增的標籤，放在容器外 -->
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="ProgressBar"></div>
+                        <span class="progress-percentage" id="ProgressPercentage">0%</span>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <img src="User.png">
+                    <span id="UserName">U123</span>
+                    <div class="menu">
+                        <a href="Record.html">學習記錄</a>
+                        <a href="Addition.html">補充資料</a>
+                        <a href="#" onclick="leave();">登出</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- 點 -->
+            <div class = "node node-1" data-level = "概念簡介" onclick = "window.location = 'level1.html';">1</div>
+            <div class = "node node-2" data-level = "如何列式？" onclick = "window.location = 'level2.html';">2</div>
+            <div class = "node node-3" data-level = "解二元一次聯立方程式" onclick = "window.location = 'level3.html';">3</div>
+            <div class = "node node-4" data-level = "應用問題" onclick = "window.location = 'level4.html';">4</div>
+            <div class = "node node-5" data-level = "終極挑戰" onclick = "window.location = 'level5.html';">5</div>
+
+            <!-- 線 -->
+            <div class = "line line-1"></div>
+            <div class = "line line-2"></div>
+            <div class = "line line-3"></div>
+            <div class = "line line-4"></div>
+
+            <div class = "image-SpaceShip" onclick = "showModal1();"></div>
+            <div class = "hint"><font size = 5><b>學習地圖</b></font><br>請先點選【太空人】</div>
+            <div class = "image-Astronaut" onclick = "showModal2();"></div>
+
+            <div id = "Modal1" class = "modal">
+                <div class = "modal-content">
+                    <span class = "close" onclick = "closeModal1();">x</span>
+                    <p>
+                        嘿嘿嘿！歡迎來到【二元一次方程式】的學習之旅，<br>
+                        學習目錄如下：<br>
+                        <ol>
+                            <li><a href = "level1.html">概念簡介</a></li>
+                            <li><a href = "level2.html">如何列式？</a></li>
+                            <li><a href = "level3.html">解二元一次聯立方程式</a></li>
+                            <li><a href = "level4.html">應用問題</a></li>
+                            <li><a href = "level5.html">終極挑戰</a></li>
+                        </ol>
+                        你也可以將滑鼠放置在網頁右上角，<br>
+                        也就是使用者大頭貼與名稱的位置，<br>
+                        將有<b>學習記錄</b>、<b>補充資料</b>與<b>登出</b>部分可以進行探索！<br><br>
+                        如果你準備好了，那就點選【第一關】開始冒險吧！
+                    </p>
+                </div>
+            </div>
+            <div id = "Modal2" class = "modal">
+                <div class = "modal-content">
+                    <span class = "close" onclick = "closeModal2();">x</span>
+                    <p>哈囉！我是你的學習夥伴，<br>
+                        準備好要踏上【二元一次方程式】的學習之旅了嗎？<br><br>
+                        可以找找看各關卡中，出現的外星人好朋友，<br>
+                        它會給予學習提示和加油打氣哦！<br><br>
+                        點選【太空船】來看看如何操作這個學習網頁哦！
+                    </p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

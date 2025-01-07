@@ -1,0 +1,334 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href = "CSS_Level4.css">
+        <title>二元一次方程式學習網頁</title>
+        <style>
+            .focus{background-color: #40a583;}
+            .reset{color:black;}
+        </style>
+        <script>
+            var Check = 0;
+            var stateid = 0;
+            var timerid;
+            var css = ["focus", "reset"];
+            var psid = [];
+            var step1, step2, step3, step4, step5, step6, step7, step8;
+            var index;
+            var ans = 2;
+            var arr1 = [ "說明",
+                         "範例一：運用【代入消去法】",
+                         "範例一：運用【代入消去法】",
+                         "範例二：運用【加減消去法】",
+                         "範例二：運用【加減消去法】",
+                         "課後回顧練習"];
+            var arr2 = [ "<ul>在學習完如何列式以及解二元一次聯立方程式後，我們一起來看看應用題吧！</ul><br>",
+                         "<ul>有A、B兩個正整數，A和B的差為15，A的2倍與B的5倍相同，求A和B為何？</ul><br>",
+                         "<ul>"+
+                            "<div id = 'step1'>假設A為a，B為b<br></div>"+
+                            "<div id = 'step2'>∵A和B的差為15&ensp;&ensp;∴列式一：a－b＝15<br></div>"+
+                            "<div id = 'step3'>∵A的2倍與B的5倍相同，兩者的差為0&ensp;&ensp;∴列式二：2a－5b＝0<br></div>"+
+                            "<div id = 'step4'>第一式移項：b＝a－15<br></div>"+
+                            "<div id = 'step5'>將b＝a－15代入第二式，得：2a－5（a－15）＝0</div>"+
+                            "<div id = 'step6'>化簡第二式：3a＝75，得a＝25<br></div>"+
+                            "<div id = 'step7'>將a＝25代入第一式：25－b＝15，得b＝25－15＝10<br></div>"+
+                            "<div id = 'step8'>∴A為25，B為10<br></div>"+
+                            "<button id = 'start' onclick = 'initid();'>開始</button><button id = 'steps' onclick = 'steps();'>逐步解題</button><button id = 'animation' onclick = 'anim();'>逐步動畫</button>"+"<button id = 'Clear_animation' onclick = 'clearAnim();'>停止動畫</button>"+
+                        "</ul><br>",
+                         "<ul>小美買了一瓶玻璃瓶裝的鮮奶，連瓶重630公克，<br>喝去2∕5之後，連瓶重410公克，則此玻璃瓶重多少公克？</ul><br>",
+                         "<ul>"+
+                            "<div id = 'step1'>假設玻璃瓶重x公克，鮮奶為y公克<br></div>"+
+                            "<div id = 'step2'>∵一開始的連瓶重為630公克&ensp;&ensp;∴列式一：x＋y＝630<br></div>"+
+                            "<div id = 'step3'>∵鮮奶喝去2∕5之後，剩下原本的3∕5，且連瓶重410公克<br>∴列式二：x＋3∕5y＝410<br></div>"+
+                            "<div id = 'step4'>將第一式乘以3，得第三式：3x＋3y＝630×3＝1890<br></div>"+
+                            "<div id = 'step5'>將第二式乘以5，得第四式：5x＋3y＝410×5＝2050<br></div>"+
+                            "<div id = 'step6'>將第四式與第三式相減：（5x＋3y）－（3x＋3y）＝2050－1890<br></div>"+
+                            "<div id = 'step7'>得2x＝160，x＝80<br></div>"+
+                            "<div id = 'step8'>所以此玻璃瓶重為80公克<br></div>"+
+                            "<button id = 'start' onclick = 'initid();'>開始</button><button id = 'steps' onclick = 'steps();'>逐步解題</button><button id = 'animation' onclick = 'anim();'>逐步動畫</button>"+"<button id = 'Clear_animation' onclick = 'clearAnim();'>停止動畫</button>"+
+                        "</ul><br>",
+                         "<ul>"+
+                            "阿泰有300元，買了x個20元的饅頭，以及y杯25元的豆漿，<br>請問阿泰剩下多少錢？<br><br>"+
+                            "阿泰剩下&ensp;<select id = 'list'>"+
+                                "<option value = '（20x＋25y）－300'>（20x＋25y）－300</option>"+
+                                "<option value = '300＋（20x＋25y）'>300＋（20x＋25y）</option>"+
+                                "<option value = '300－（20x＋25y）'>300－（20x＋25y）</option>"+
+                                "<option value = '（20x＋25y）＋300'>（20x＋25y）＋300</option>"+
+                            "</select>&ensp;元"+
+                        "</ul><br><button id = 'check' onclick = 'check();'>檢查答案</button>"];
+                     
+            window.onload = function() {
+                var UserName = document.getElementById("UserName");
+                UserName.innerHTML = localStorage.getItem("username");
+                // 讀取進度比例
+                const progressRate = localStorage.getItem("progress_rate");
+                // 若無儲存進度，則預設為 0%
+                let progress = progressRate ? parseInt(progressRate) : 0;
+            
+                // 更新進度
+                updateProgress(progress);
+
+                // 更新進度條
+                updateProgressBar(progress);
+                document.getElementById('next').disabled = false;
+                document.getElementById('prev').disabled = true;
+                index = 0;
+                show();
+            }
+
+            // 使用者大頭貼和文字的選單
+            document.addEventListener('DOMContentLoaded', () => {
+                const userMenu = document.querySelector('.user-menu');
+                const menu = document.querySelector('.user-menu .menu');
+
+                let timer;
+
+                userMenu.addEventListener("mouseenter", () => {
+                    clearTimeout(timer);
+                    menu.style.display = "block";
+                });
+
+                userMenu.addEventListener("mouseleave", () => {
+                    timer = setTimeout(() => {
+                        menu.style.display = "none";
+                    }, 200); // 延遲 200ms 防止不穩定
+                });
+
+                menu.addEventListener("mouseenter", () => {
+                    clearTimeout(timer);
+                    menu.style.display = "block";
+                });
+
+                menu.addEventListener("mouseleave", () => {
+                    timer = setTimeout(() => {
+                        menu.style.display = "none";
+                    }, 200);
+                });
+            });
+            
+            // 登出
+            function leave() {
+                var confirmLogout = confirm("你確定要登出嗎?"); 
+                if(confirmLogout) {
+                    window.location.href = "Login.html"; 
+                }
+            }
+
+            // 模態視窗顯示與關閉（隱藏）
+            function showModal() {
+                document.getElementById("Modal").style.display = "flex"; 
+            }
+
+            function closeModal() {
+                document.getElementById("Modal").style.display = "none"; 
+            }
+
+            function showModal_check() {
+                document.getElementById("Modal-check").style.display = "flex"; 
+            }
+
+            function closeModal_check() {
+                document.getElementById("Modal-check").style.display = "none"; 
+            }
+
+            // 顯示內容
+            function show() {
+                var content1 = document.getElementById("content1");
+                var content2 = document.getElementById("content2");
+                content1.innerHTML = arr1[index];
+                content2.innerHTML = arr2[index];
+            }
+
+            // 下一頁
+            function next() {
+                index++;
+                clearInterval(timerid);
+                if((index + 1) > arr1.length - 1){
+                    document.getElementById('next').disabled = true;
+                    show();
+                }
+                else{
+                    document.getElementById('next').disabled = false;
+                    document.getElementById('prev').disabled = false;
+                    show();
+                }
+                show();
+            }
+
+            // 上一頁
+            function prev() {
+                index--;
+                clearInterval(timerid);
+                if((index - 1) < 0){
+                    document.getElementById('prev').disabled = true;
+                    show();
+                }
+                else{
+                    document.getElementById('prev').disabled = false;
+                    document.getElementById('next').disabled = false;
+                    show();
+                }
+                show();
+            }
+
+            // 檢查答案
+            function check() {
+                Check++;
+                var list = document.getElementById('list');
+
+                if(list.selectedIndex == ans){
+                    document.getElementById('check').disabled = true;
+                    document.getElementById('respond').innerHTML = 
+                        "答對囉！<br><button id='Correct_And_goBack' onclick=\"window.location='HomePage.html';\">回主頁</button>" +
+                        "<button id='Correct_And_goNext' onclick=\"window.location='level5.html';\">下一關</button>";
+                    localStorage.setItem("progress_rate", "80%");
+                    showModal_check();
+
+                }
+                else{
+                    document.getElementById('check').disabled = false;
+                    if(Check == 1) {
+                        document.getElementById('respond').innerHTML = 
+                        "答案不對，再試試看吧！<br><br>提示：<br>想想要如何列式出阿泰花費的金額";
+                    }
+                    else if(Check == 2) {
+                        document.getElementById('respond').innerHTML = 
+                        "答案不對，再試試看吧！<br><br>提示：<br>剩下的錢＝原本有的錢－花掉的錢！";
+                    }
+                    else {
+                        document.getElementById('respond').innerHTML = 
+                        "答案不對，再試試看吧！<br><br>提示：<br>建議你再回去看看前面學習的內容哦！";
+                    }
+                    showModal_check();
+                }
+            }
+
+            function initid(){
+                stateid = 0;
+                for(var i = 0; i <= 8; i++) psid[i] = document.getElementById("step"+(i+1));
+                document.getElementById('start').disabled = true;
+            }
+
+            // 動畫
+            function anim(){
+                timerid = setInterval(steps,1000); //setInterval("stedps()",1000);
+                document.getElementById('steps').disabled = true;
+                document.getElementById('animation').disabled = true;
+            }
+
+            // 停止動畫
+            function clearAnim(){
+                clearInterval(timerid);
+                document.getElementById('steps').disabled = false;
+                document.getElementById('animation').disabled = false;
+            }
+
+            // 逐步解題
+            function steps(){
+                switch (stateid){
+                    case 0: psid[0].classList.add(css[0]); 
+                            stateid++;
+                            break;
+                    case 1: 
+                    case 2: 
+                    case 3: 
+                    case 4: 
+                    case 5:
+                    case 6: 
+                    case 7: psid[stateid-1].classList.remove(css[0]);
+                            psid[stateid].classList.add(css[0]);
+                            stateid++;
+                            break;
+                    case 8: psid[stateid-1].classList.remove(css[0]);
+                            stateid = 0;
+                            break;
+                }
+            }
+
+            function updateProgress(progress) {
+                localStorage.setItem("progress", progress); // 保存進度
+                const progressBar = document.getElementById("ProgressBar");
+                const progressPercentage = document.getElementById("ProgressPercentage");
+
+                // 更新進度條寬度
+                progressBar.style.width = progress + "%";
+
+                // 更新百分比文字
+                progressPercentage.innerText = progress + "%";
+
+                // 判斷是否為100%
+                if (progress >= 100) {
+                    progressBar.classList.add("full"); // 添加 full 類
+                } 
+                else {
+                    progressBar.classList.remove("full"); // 移除 full 類（非100%情況）
+                }
+            }
+
+            function updateProgressBar(progress) {
+                const progressBar = document.getElementById("ProgressBar");
+
+                // 設定進度條寬度（比例）
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                    progressBar.style.backgroundColor = "#a1f5d7"; // 設定進度條顏色
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>二元一次方程式</h1>
+            <div class="header-right">
+                <div class="progress-bar-container-wrapper">
+                    <span class="progress-label">學習進度：</span> <!-- 新增的標籤，放在容器外 -->
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="ProgressBar"></div>
+                        <span class="progress-percentage" id="ProgressPercentage">0%</span>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <img src="User.png">
+                    <span id="UserName">U123</span>
+                    <div class="menu">
+                        <a href="Record.html">學習記錄</a>
+                        <a href="Addition.html">補充資料</a>
+                        <a href="#" onclick="leave();">登出</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <button class = "Back" onclick = "window.location = 'HomePage.html';">回主頁</button>
+            <div class = "Title">應用問題</div>
+            <div id = "content1"></div>
+            <div id = "content2"></div>
+            <button id = "prev" onclick = "prev();">上一頁</button>
+            <button id = "next" onclick = "next();">下一頁</button>
+            <div class = "image-Alien" onclick = "showModal();"></div>
+            <div id = "Modal" class = "modal">
+                <div class = "modal-content">
+                    <span class = "close" onclick = "closeModal();">x</span>
+                    <p>
+                        <b>範例一：</b><br>
+                        &ensp;&ensp;有A、B兩個正整數，A和B的差為15，<br>
+                        &ensp;&ensp;A的2倍與B的5倍相同，求A和B為何？<br>
+                        <b>範例二：</b><br>
+                        &ensp;&ensp;小美買了一瓶玻璃瓶裝的鮮奶，<br>
+                        &ensp;&ensp;連瓶重630公克，<br>
+                        &ensp;&ensp;喝去2∕5之後，連瓶重410公克，<br>
+                        &ensp;&ensp;則此玻璃瓶重多少公克？<hr>
+                        應用問題好有趣，可以跟生活實例結合，<br>
+                        你也是這麼認為的吧？
+                    </p>
+                </div>
+            </div>
+            <div id = "Modal-check" class = "modal-check">
+                <div class = "modal-content">
+                    <span class = "close" onclick = "closeModal_check();">x</span>
+                    <p id = 'respond'></p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

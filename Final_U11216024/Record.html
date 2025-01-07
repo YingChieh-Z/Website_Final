@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href = "CSS_Record.css">
+        <title>二元一次方程式學習網頁</title>
+        <script>
+            var index;
+            var Score;
+                     
+            window.onload = function() {
+                var UserName = document.getElementById("UserName");
+                UserName.innerHTML = localStorage.getItem("username");
+                var content_time1 = document.getElementById("content_time1");
+                var content_time2 = document.getElementById("content_time2");
+                var learningProgress1 = document.getElementById("learningProgress1");
+                var learningProgress2 = document.getElementById("learningProgress2");
+                const progressRate = localStorage.getItem("progress_rate");
+                var content1 = document.getElementById("content1");
+                var content2 = document.getElementById("content2");
+                var loginTime = localStorage.getItem("loginTime");
+                var Score = parseInt(localStorage.getItem("score"));
+                var learningRecord = localStorage.getItem("learningRecord");
+                var testTime = parseInt(localStorage.getItem("testTime"));
+
+                // 若無儲存進度，則預設為 0%
+                let progress = progressRate ? parseInt(progressRate) : 0;
+            
+                // 更新進度
+                updateProgress(progress);
+
+                // 更新進度條
+                updateProgressBar(progress);
+
+                content_time1.innerHTML = "登入時間";
+                content_time2.innerHTML = loginTime;
+                learningProgress1.innerHTML = "學習進度";
+                learningProgress2.innerHTML = progressRate;
+                content1.innerHTML = "挑戰記錄"
+                content2.innerHTML = "分數： " + Score + "分<br>挑戰時間： " + testTime + "秒<br>作答記錄： " + learningRecord;
+            }
+
+            //使用者大頭貼和文字的選單
+            document.addEventListener('DOMContentLoaded', () => {
+                const userMenu = document.querySelector('.user-menu');
+                const menu = document.querySelector('.user-menu .menu');
+
+                let timer;
+
+                userMenu.addEventListener("mouseenter", () => {
+                    clearTimeout(timer);
+                    menu.style.display = "block";
+                });
+
+                userMenu.addEventListener("mouseleave", () => {
+                    timer = setTimeout(() => {
+                        menu.style.display = "none";
+                    }, 200); // 延遲 200ms 防止不穩定
+                });
+
+                menu.addEventListener("mouseenter", () => {
+                    clearTimeout(timer);
+                    menu.style.display = "block";
+                });
+
+                menu.addEventListener("mouseleave", () => {
+                    timer = setTimeout(() => {
+                        menu.style.display = "none";
+                    }, 200);
+                });
+            });
+            
+            // 登出
+            function leave() {
+                var confirmLogout = confirm("你確定要登出嗎?"); 
+                if(confirmLogout) {
+                    window.location.href = "Login.html"; 
+                }
+            }
+
+            // 模態視窗顯示與關閉（隱藏）
+            function showModal() {
+                document.getElementById("Modal").style.display = "flex";
+            }
+
+            function closeModal() {
+                document.getElementById("Modal").style.display = "none";
+            }
+
+            function showModal_check() {
+                document.getElementById("Modal-check").style.display = "flex";
+            }
+
+            function closeModal_check() {
+                document.getElementById("Modal-check").style.display = "none";
+            }
+ 
+            
+            function updateProgress(progress) {
+                localStorage.setItem("progress", progress); // 保存進度
+                const progressBar = document.getElementById("ProgressBar");
+                const progressPercentage = document.getElementById("ProgressPercentage");
+
+                // 更新進度條寬度
+                progressBar.style.width = progress + "%";
+
+                // 更新百分比文字
+                progressPercentage.innerText = progress + "%";
+
+                // 判斷是否為100%
+                if (progress >= 100) {
+                    progressBar.classList.add("full"); // 添加 full 類
+                } 
+                else {
+                    progressBar.classList.remove("full"); // 移除 full 類（非100%情況）
+                }
+            }
+
+            function updateProgressBar(progress) {
+                const progressBar = document.getElementById("ProgressBar");
+
+                // 設定進度條寬度（比例）
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                    progressBar.style.backgroundColor = "#a1f5d7"; // 設定進度條顏色
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>二元一次方程式</h1>
+            <div class="header-right">
+                <div class="progress-bar-container-wrapper">
+                    <span class="progress-label">學習進度：</span> <!-- 新增的標籤，放在容器外 -->
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="ProgressBar"></div>
+                        <span class="progress-percentage" id="ProgressPercentage">0%</span>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <img src="User.png">
+                    <span id="UserName">U123</span>
+                    <div class="menu">
+                        <a href="Record.html">學習記錄</a>
+                        <a href="Addition.html">補充資料</a>
+                        <a href="#" onclick="leave();">登出</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class = "container">
+            <button class = "Back" onclick = "window.location = 'HomePage.html';">回主頁</button>
+            <div class = "Title">學習記錄</div>
+            <div id = "content_time1"></div>
+            <div id = "content_time2"></div>
+            <div id = "learningProgress1"></div>
+            <div id = "learningProgress2"></div>
+            <div id = "content1"></div>
+            <div id = "content2"></div>
+            <div id = "content3">題目出處：康軒版國一下數學第一次段考複習測驗卷</div>
+        </div>
+    </body>
+</html>

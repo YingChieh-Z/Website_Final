@@ -1,0 +1,587 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href = "CSS_Level5.css">
+        <title>二元一次方程式學習網頁</title>
+        <script>
+            var score = 0;
+            var stateid = 0;
+            var sec = 0;
+            var index;
+            var TimerID;// 用來存儲計時器的 ID
+            var CountDownID;
+            var learningRecord = "";
+            var tmpString = "";
+            var rightAnswer = "";
+            var arr1 = [ "選擇挑戰模式",
+                         "正常作答模式"+"<span id = 'adjust'>&ensp;&ensp;測驗時間：<span id = 'time'></span>秒&ensp;&ensp;<span id = 'count'>目前累計分數：0分</span></span>"+
+                         "<span id = 'feedback'>回饋：</span>"+
+                         "<button id = 'check' onclick = 'check1();'>檢查答案</button>"+
+                         "<button id = 'next' onclick = 'next1();'>下一題</button><br>",
+                         "限時作答模式"+"<span id = 'adjust'>&ensp;&ensp;測驗時間：<span id = 'time'></span>秒&ensp;&ensp;倒數計時：<span id = 'CountDown'></span>秒&ensp;&ensp;<span id = 'count'>目前累計分數：0分</span></span>"+
+                         "<span id = 'feedback'>回饋：</span>"+
+                         "<button id = 'check' onclick = 'check2();'>檢查答案</button>"+
+                         "<button id = 'next' onclick = 'next2();'>下一題</button><br>"];
+            var arr2 = [ "<ul>"+
+                         "<button id = 'normal' onclick = 'NormalVersion();'>正常作答模式</button>"+
+                         "<button id = 'timeLimit' onclick = 'timeLimitVersion();'>限時作答模式</button></ul><br>"+
+                         "請注意：<br>&ensp;&ensp;點選模式後，會立即開始測驗！<br>&ensp;&ensp;同時，不論何種模式，未檢查答案視為未作答！"];
+            var order = [];
+            var Q = [ "<ul>下列哪一個選項內的x、y值會使得7x－9y之值最大？<br><br>"+
+                      "<ul><form name = 'myForm1' id = 'A1'>"+
+                                "&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type ='radio' id = 'choice2_1' name = 'options' value = 'A'>A. x＝4，y＝5"+
+                                "&ensp;&ensp;<input type ='radio' id = 'choice2_2' name = 'options' value = 'B'>B. x＝1∕3，y＝1∕5<br><br>"+
+                                "&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type ='radio' id = 'choice2_3' name = 'options' value = 'C'>C. x＝－0.3，y＝－5∕2"+
+                                "&ensp;&ensp;<input type ='radio' id = 'choice2_4' name = 'options' value = 'D'>D. x＝2，y＝－3"+
+                      "</form></ul></ul><br>",
+                      "<ul>曉鈴的錢包內有十元硬幣x個，五元硬幣y個，請問錢包內有多少元？<br><br>"+
+                      "<ul><form name = 'myForm2' id = 'A2'>"+
+                                "&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type ='radio' id = 'choice3_1' name = 'options' value = 'A'>A. x＋y"+
+                                "&ensp;&ensp;<input type ='radio' id = 'choice3_2' name = 'options' value = 'B'>B. 10x＋y<br><br>"+
+                                "&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type ='radio' id = 'choice3_3' name = 'options' value = 'C'>C. 10x＋5y"+
+                                "&ensp;&ensp;<input type ='radio' id = 'choice3_4' name = 'options' value = 'D'>D. 10（x＋5y）"+
+                      "</form></ul></ul><br>",
+                      "<ul>若聯立方程式<img src = 'testimg_4.png' id = 'testImg4' width = '150px' height = '90px'>的解為x＝3，y＝5，則下列何者正確？<br><br>"+
+                      "<ul><form name = 'myForm3' id = 'A3'>"+
+                                "&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type ='radio' id = 'choice3_1' name = 'options' value = 'A'>A. b是質數"+
+                                "&ensp;&ensp;<input type ='radio' id = 'choice3_2' name = 'options' value = 'B'>B. a＋b＝0<br><br>"+
+                                "&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input type ='radio' id = 'choice3_3' name = 'options' value = 'C'>C. ab是3的倍數"+
+                                "&ensp;&ensp;<input type ='radio' id = 'choice3_4' name = 'options' value = 'D'>D. a－b＝0"+
+                      "</form></ul></ul><br>",
+                      "<ul>若y＝－3x＋4，則2x－5y＋1可以用x表示為&ensp;<input type = 'text' id = 'A4'></ul><br>",
+                      "<ul>阿玉班上的男生人數比女生人數的3倍少10人，女生人數的2倍等於男生人數，<br>假設男生有x人，女生有y人：<br><br>"+
+                      "<ul>（1）請列出聯立方程式（用半形逗號間隔兩式）：&ensp;<input type = 'text' id = 'A5'><br><br>"+
+                      "（2）（x,y）＝&ensp;<input type = 'text' id = 'A6'><br></ul></ul><br><br>",
+                      "<ul>哥哥與弟弟各有數張紀念卡。已知弟弟給哥哥10張後，哥哥的張數就是弟弟的2倍；<br>若哥哥給弟弟10張後，兩人的張數就一樣多。<br>假設哥哥的張數為x張，哥哥的張數為y張：<br><br>"+
+                      "<ul>（1）請列出聯立方程式（用半形逗號間隔兩式）：&ensp;<input type = 'text' id = 'A7'><br><br>"+
+                      "（2）（x,y）＝&ensp;<input type = 'text' id = 'A8'><br></ul></ul><br><br>",
+                      "<ul>有一聯立方程式如圖<img src = 'testimg_7.png' id = 'testImg7' width = '150px' height = '90px'>，請求出其解為何？<br><br>"+
+                      "<ul>（1）a＝&ensp;<input type = 'text' id = 'A9'><br><br>"+
+                      "（2）b＝&ensp;<input type = 'text' id = 'A10'><br></ul></ul><br>",];
+            var ans = ['D','C','B',"17x+19","x-3y=-10,x-2y=0","(20,10)","x-2y=-30,x-y=20","(70,50)","-36","-60"];
+                     
+            window.onload = function() {
+                var UserName = document.getElementById("UserName");
+                UserName.innerHTML = localStorage.getItem("username");
+                // 讀取進度比例
+                const progressRate = localStorage.getItem("progress_rate");
+                // 若無儲存進度，則預設為 0%
+                let progress = progressRate ? parseInt(progressRate) : 0;
+            
+                // 更新進度
+                updateProgress(progress);
+
+                // 更新進度條
+                updateProgressBar(progress);
+                index = 0;
+                show();
+            }
+
+            // 使用者大頭貼和文字的選單
+            document.addEventListener('DOMContentLoaded', () => {
+                const userMenu = document.querySelector('.user-menu');
+                const menu = document.querySelector('.user-menu .menu');
+
+                let timer;
+
+                userMenu.addEventListener("mouseenter", () => {
+                    clearTimeout(timer);
+                    menu.style.display = "block";
+                });
+
+                userMenu.addEventListener("mouseleave", () => {
+                    timer = setTimeout(() => {
+                        menu.style.display = "none";
+                    }, 200); // 延遲 200ms 防止不穩定
+                });
+
+                menu.addEventListener("mouseenter", () => {
+                    clearTimeout(timer);
+                    menu.style.display = "block";
+                });
+
+                menu.addEventListener("mouseleave", () => {
+                    timer = setTimeout(() => {
+                        menu.style.display = "none";
+                    }, 200);
+                });
+            });
+            
+            // 登出
+            function leave() {
+                var confirmLogout = confirm("你確定要登出嗎?"); 
+                if(confirmLogout) {
+                    window.location.href = "Login.html"; 
+                }
+            }
+
+            // 模態視窗顯示與關閉（隱藏）
+            function showModal_check() {
+                document.getElementById("Modal-check").style.display = "flex"; 
+            }
+
+            function closeModal_check() {
+                document.getElementById("Modal-check").style.display = "none"; 
+            }
+
+            function timeSet1() {
+                document.getElementById('time').innerHTML = sec;
+                TimerID = window.setInterval((()=>{sec++; document.getElementById('time').innerHTML = sec;}), 1000);
+            }
+ 
+            function timeSet2() {
+                let countdown = 10; // 每題倒數 10 秒
+                document.getElementById('CountDown').innerHTML = countdown;
+
+                // 啟動倒數計時器
+                CountDownID = window.setInterval(() => {
+                    if (countdown > 0) {
+                        countdown--; // 倒數時間減少
+                        document.getElementById('CountDown').innerHTML = countdown;
+                    } 
+                    else {
+                        // 當倒數結束，自動跳到下一題
+                        window.clearInterval(CountDownID); // 停止倒數計時器
+                        if(order[index] == 4) {
+                            correctAnswer = ans[4] + " / " + ans[5];
+                        }
+                        else if(order[index] == 5) {
+                            correctAnswer = ans[6] + " / " + ans[7];
+                        }
+                        else if(order[index] == 6) {
+                            correctAnswer = ans[8] + " / " + ans[9];
+                        }
+                        else {
+                            correctAnswer = ans[order[index]];
+                        }
+
+                        learningRecord += Q[order[index]] + "<br>你的答案： " + " " + "<br>正確答案： " + correctAnswer + "<br><hr>";
+                        next2(); // 跳到下一題
+                    }
+                }, 1000); // 每秒執行一次
+            }
+
+            function show() {
+                var content1 = document.getElementById("content1");
+                var content2 = document.getElementById("content2");
+                content1.innerHTML = arr1[0];
+                content2.innerHTML = arr2[0];
+            }
+
+            function NormalVersion() {
+                content1.innerHTML = arr1[1];
+                score = 0; // 分數重置
+                document.getElementById('count').innerHTML = '目前累計分數：0分'; // 顯示重置
+                timeSet1();
+                RandomOrder();
+            }
+
+            function timeLimitVersion() {
+                content1.innerHTML = arr1[2];
+                score = 0; // 分數重置
+                document.getElementById('count').innerHTML = '目前累計分數：0分'; // 顯示重置
+                timeSet1();
+                timeSet2();
+                RandomOrder();
+            }
+
+            function RandomOrder() {
+                for (var i = 0; i < 7; i++) {
+                    let num;
+                    do {
+                        num = Math.floor(Math.random() * 7); // 產生 0~7 的亂數
+                    } while (order.includes(num)); // 檢查是否重複
+                    order[i] = num; // 如果不重複，加入陣列
+                }
+                index = 0;
+                document.getElementById('check').disabled = false;
+                document.getElementById('next').disabled = true;
+                showQuestion();
+            }
+
+            function showQuestion() {
+                content2.innerHTML = Q[order[index]];
+            }
+
+            function next1() {
+                index++;
+                document.getElementById('check').disabled = false;
+                document.getElementById('next').disabled = true;
+                // 清除回饋文字
+                document.getElementById("feedback").innerHTML = "回饋： ";
+                tmpString = "";
+                correctAnswer = "";
+                showQuestion();
+            }
+
+            function next2() {
+                index++;
+                // 當還有題目時，重新開始倒數計時
+                if (index < order.length) {
+                    timeSet2(); // 開始新的倒數
+                    document.getElementById('check').disabled = false;
+                    document.getElementById('next').disabled = true;
+                    // 清除回饋文字
+                    document.getElementById("feedback").innerHTML = "回饋： ";
+                    tmpString = "";
+                    correctAnswer = "";
+                    showQuestion(); 
+                }
+                else {
+                    window.clearInterval(TimerID);
+                    window.clearInterval(CountDownID);
+                    document.getElementById('check').disabled = true;
+                    document.getElementById('next').disabled = true;
+                    localStorage.setItem("score", score);
+                    localStorage.setItem("learningRecord", learningRecord);
+                    localStorage.setItem("testTime", sec);
+                    document.getElementById('AfterTest').innerHTML = 
+                        "挑戰結束囉！來看看剛剛挑戰的紀錄吧！<br><button id='Correct_And_goBack' onclick=\"window.location='level5.html';\">重新挑戰</button>" +
+                        "<button id='Correct_And_goNext' onclick=\"window.location='Record.html';\">學習記錄</button>";
+                    showModal_check();
+                }
+                
+            }
+
+            //檢查答案
+            function check1() {
+                // 回饋文字區域
+                var feedback = document.getElementById("feedback");
+                var correct = 0;
+                if(index + 1 < 7) {
+                    document.getElementById('check').disabled = true;
+                    document.getElementById('next').disabled = false;
+                }
+                else {
+                    document.getElementById('check').disabled = true;
+                    document.getElementById('next').disabled = true;
+                    window.clearInterval(TimerID);
+                }
+
+                // 對於選擇題
+                if(order[index] < 3) {
+                    var form = document.getElementById('A' + (order[index] + 1));
+                    correctAnswer = ans[order[index]];
+                    for(var i = 0; i < form.options.length; i++) {
+                        if(form.options[i].checked) {
+                            tmpString = form.options[i].value;
+                        }
+                        if(form.options[i].checked && form.options[i].value == ans[order[index]]) {
+                            correct = 1;
+                            feedback.innerHTML = "回饋： 恭喜答對！🎉";
+                            break;
+                        }
+                        if(i == 3){
+                            feedback.innerHTML = "回饋： 好可惜，答錯了😢";
+                        }
+                    }
+                } 
+                // 檢查是否需要多格答案（第4題）
+                else if (order[index] == 4) { 
+                    // 多格答案的處理
+                    var answer1 = document.getElementById('A5').value.trim();
+                    var answer2 = document.getElementById('A6').value.trim();
+
+                    correctAnswer = ans[4] + " / " + ans[5];
+                    tmpString = answer1 + " / " + answer2;
+
+                    var firstCorrect = (answer1 == ans[4]);
+                    var secondCorrect = (answer2 == ans[5]);
+
+                    if (firstCorrect && secondCorrect) {
+                        correct = 2; // 全對
+                        feedback.innerHTML = "回饋： 哇！真厲害，兩小題都答對了！🎉";
+                    } 
+                    else if (firstCorrect || secondCorrect) {
+                        correct = 1; // 部分正確
+                        feedback.innerHTML = "回饋： 很棒，答對一小題哦！🎉";
+                    }
+                    else {
+                        feedback.innerHTML = "回饋： 好可惜，答錯了😢";
+                    }
+                } 
+                // 檢查是否需要多格答案（第5題）
+                else if (order[index] == 5) {
+                    var answer1 = document.getElementById('A7').value.trim();
+                    var answer2 = document.getElementById('A8').value.trim();
+
+                    correctAnswer = ans[6] + " / " + ans[7];
+                    tmpString = answer1 + " / " + answer2;
+
+                    var firstCorrect = (answer1 == ans[6]);
+                    var secondCorrect = (answer2 == ans[7]);
+
+                    if (firstCorrect && secondCorrect) {
+                        correct = 2; // 全對
+                        feedback.innerHTML = "回饋： 哇！真厲害，兩小題都答對了！🎉";
+                    } 
+                    else if (firstCorrect || secondCorrect) {
+                        correct = 1; // 部分正確
+                        feedback.innerHTML = "回饋： 很棒，答對一小題哦！🎉"
+                    }
+                    else {
+                        feedback.innerHTML = "回饋： 好可惜，答錯了😢";
+                    }
+                } 
+                // 檢查是否需要多格答案（第6題）
+                else if (order[index] == 6) { 
+                    // 多格答案的處理
+                    var answer1 = document.getElementById('A9').value.trim();
+                    var answer2 = document.getElementById('A10').value.trim();
+
+                    correctAnswer = ans[8] + " / " + ans[9];
+                    tmpString = answer1 + " / " + answer2;
+
+                    var firstCorrect = (answer1 == ans[8]);
+                    var secondCorrect = (answer2 == ans[9]);
+
+                    if (firstCorrect && secondCorrect) {
+                        correct = 2; // 全對
+                        feedback.innerHTML = "回饋： 哇！真厲害，兩小題都答對了！🎉";
+                    } 
+                    else if (firstCorrect || secondCorrect) {
+                        correct = 1; // 部分正確
+                        feedback.innerHTML = "回饋： 很棒，答對一小題哦！🎉";
+                    }
+                    else {
+                        feedback.innerHTML = "回饋： 好可惜，答錯了😢";
+                    }
+                }
+                // 對於填空題
+                else {
+                    var answer = document.getElementById('A' + (order[index] + 1)).value.trim();
+                    
+                    correctAnswer = ans[order[index]];
+                    tmpString = answer;
+
+                    if(answer == ans[order[index]]) {
+                        correct = 1;
+                        feedback.innerHTML = "回饋： 恭喜答對！🎉";
+                    }
+                    else {
+                        feedback.innerHTML = "回饋： 好可惜，答錯了😢";
+                    }
+                }
+
+                // 更新分數
+                score += 10 * correct;
+                document.getElementById('count').innerHTML = "目前累計分數："+score+"分";
+                learningRecord += Q[order[index]] + "<br>你的答案： " + tmpString + "<br>正確答案： " + correctAnswer + "<br><hr>";
+
+                if(index + 1 >= 7){
+                    localStorage.setItem("score", score);
+                    localStorage.setItem("learningRecord", learningRecord);
+                    localStorage.setItem("testTime", sec);
+                    localStorage.setItem("progress_rate", "100%");
+                    document.getElementById('AfterTest').innerHTML = 
+                            "挑戰結束囉！來看看剛剛挑戰的紀錄吧！<br><button id='Correct_And_goBack' onclick=\"window.location='level5.html';\">重新挑戰</button>" +
+                            "<button id='Correct_And_goNext' onclick=\"window.location='Record.html';\">學習記錄</button>";
+                    showModal_check();
+                }
+            }
+
+            //檢查答案
+            function check2() {
+                var feedback = document.getElementById("feedback");
+                window.clearInterval(CountDownID); // 停止倒數計時器
+                if(index + 1 < 7) {
+                    document.getElementById('check').disabled = true;
+                    document.getElementById('next').disabled = false;
+                }
+                else {
+                    document.getElementById('check').disabled = true;
+                    document.getElementById('next').disabled = true;
+                    window.clearInterval(TimerID);
+                }
+                var correct = 0;
+
+                // 對於選擇題
+                if(order[index] < 3) {
+                    var form = document.getElementById('A' + (order[index] + 1));
+                    correctAnswer = ans[order[index]];
+                    for(var i = 0; i < form.options.length; i++) {
+                        if(form.options[i].checked) {
+                            tmpString = form.options[i].value;
+                        }
+                        if(form.options[i].checked && form.options[i].value == ans[order[index]]) {
+                            correct = 1;
+                            feedback.innerHTML = "回饋： 恭喜答對！🎉";
+                            break;
+                        }
+                        if(i == 3){
+                            feedback.innerHTML = "回饋： 好可惜，答錯了😢";
+                        }
+                    }
+                } 
+                // 檢查是否需要多格答案（第4題）
+                else if (order[index] == 4) { 
+                    // 多格答案的處理
+                    var answer1 = document.getElementById('A5').value.trim();
+                    var answer2 = document.getElementById('A6').value.trim();
+
+                    correctAnswer = ans[4] + " / " + ans[5];
+                    tmpString = answer1 + " / " + answer2;
+
+                    var firstCorrect = (answer1 == ans[4]);
+                    var secondCorrect = (answer2 == ans[5]);
+
+                    if (firstCorrect && secondCorrect) {
+                        correct = 2; // 全對
+                        feedback.innerHTML = "回饋： 哇！真厲害，兩小題都答對了！🎉";
+                    } 
+                    else if (firstCorrect || secondCorrect) {
+                        correct = 1; // 部分正確
+                        feedback.innerHTML = "回饋： 很棒，答對一小題哦！🎉";
+                    }
+                    else {
+                        feedback.innerHTML = "回饋： 好可惜，答錯了😢";
+                    }
+                } 
+                // 檢查是否需要多格答案（第5題）
+                else if (order[index] == 5) {
+                    var answer1 = document.getElementById('A7').value.trim();
+                    var answer2 = document.getElementById('A8').value.trim();
+
+                    correctAnswer = ans[6] + " / " + ans[7];
+                    tmpString = answer1 + " / " + answer2;
+
+                    var firstCorrect = (answer1 == ans[6]);
+                    var secondCorrect = (answer2 == ans[7]);
+
+                    if (firstCorrect && secondCorrect) {
+                        correct = 2; // 全對
+                        feedback.innerHTML = "回饋： 哇！真厲害，兩小題都答對了！🎉";
+                    } 
+                    else if (firstCorrect || secondCorrect) {
+                        correct = 1; // 部分正確
+                        feedback.innerHTML = "回饋： 很棒，答對一小題哦！🎉";
+                    }
+                    else {
+                        feedback.innerHTML = "回饋： 好可惜，答錯了😢";
+                    }
+                } 
+                // 檢查是否需要多格答案（第6題）
+                else if (order[index] == 6) { 
+                    // 多格答案的處理
+                    var answer1 = document.getElementById('A9').value.trim();
+                    var answer2 = document.getElementById('A10').value.trim();
+
+                    correctAnswer = ans[8] + " / " + ans[9];
+                    tmpString = answer1 + " / " + answer2;
+
+                    var firstCorrect = (answer1 == ans[8]);
+                    var secondCorrect = (answer2 == ans[9]);
+
+                    if (firstCorrect && secondCorrect) {
+                        correct = 2; // 全對
+                        feedback.innerHTML = "回饋： 哇！真厲害，兩小題都答對了！🎉";
+                    } 
+                    else if (firstCorrect || secondCorrect) {
+                        correct = 1; // 部分正確
+                        feedback.innerHTML = "回饋： 很棒，答對一小題哦！🎉";
+                    }
+                    else {
+                        feedback.innerHTML = "回饋： 好可惜，答錯了😢";
+                    }
+                } 
+                // 對於填空題
+                else {
+                    var answer = document.getElementById('A' + (order[index] + 1)).value.trim();
+
+                    correctAnswer = ans[order[index]];
+                    tmpString = answer;
+
+                    if(answer == ans[order[index]]) {
+                        correct = 1;
+                        feedback.innerHTML = "回饋： 恭喜答對！🎉";
+                    }
+                    else {
+                        feedback.innerHTML = "回饋： 好可惜，答錯了😢";
+                    }
+                }
+
+                // 更新分數
+                score += 10 * correct;
+                document.getElementById('count').innerHTML = "目前累計分數："+score+"分";
+                learningRecord += Q[order[index]] + "<br>你的答案： " + tmpString + "<br>正確答案： " + correctAnswer + "<br><hr>";
+
+                if(index + 1 >= 7) {
+                    learningRecord += Q[order[index]] + "<br>你的答案： " + tmpString + "<br>正確答案： " + correctAnswer + "<br><hr>";
+                    localStorage.setItem("score", score);
+                    localStorage.setItem("learningRecord", learningRecord);
+                    localStorage.setItem("testTime", sec);
+                    localStorage.setItem("progress_rate", "100%");
+                    document.getElementById('AfterTest').innerHTML = 
+                        "挑戰結束囉！來看看剛剛挑戰的紀錄吧！<br><button id='Correct_And_goBack' onclick=\"window.location='level5.html';\">重新挑戰</button>" +
+                        "<button id='Correct_And_goNext' onclick=\"window.location='Record.html';\">學習記錄</button>";
+                    showModal_check();
+                }
+            }
+            
+            function updateProgress(progress) {
+                localStorage.setItem("progress", progress); // 保存進度
+                const progressBar = document.getElementById("ProgressBar");
+                const progressPercentage = document.getElementById("ProgressPercentage");
+
+                // 更新進度條寬度
+                progressBar.style.width = progress + "%";
+
+                // 更新百分比文字
+                progressPercentage.innerText = progress + "%";
+
+                // 判斷是否為100%
+                if (progress >= 100) {
+                    progressBar.classList.add("full"); // 添加 full 類
+                } 
+                else {
+                    progressBar.classList.remove("full"); // 移除 full 類（非100%情況）
+                }
+            }
+
+            function updateProgressBar(progress) {
+                const progressBar = document.getElementById("ProgressBar");
+
+                // 設定進度條寬度（比例）
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                    progressBar.style.backgroundColor = "#a1f5d7"; // 設定進度條顏色
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>二元一次方程式</h1>
+            <div class="header-right">
+                <div class="progress-bar-container-wrapper">
+                    <span class="progress-label">學習進度：</span> <!-- 新增的標籤，放在容器外 -->
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="ProgressBar"></div>
+                        <span class="progress-percentage" id="ProgressPercentage">0%</span>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <img src="User.png">
+                    <span id="UserName">U123</span>
+                    <div class="menu">
+                        <a href="Record.html">學習記錄</a>
+                        <a href="Addition.html">補充資料</a>
+                        <a href="#" onclick="leave();">登出</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <button class = "Back" onclick = "window.location = 'HomePage.html';">回主頁</button>
+            <div class = "Title">終極挑戰</div>
+            <div id = "content1"></div>
+            <div id = "content2"></div>
+            <div id = "Modal-check" class = "modal-check">
+                <div class = "modal-content">
+                    <span class = "close" onclick = "closeModal_check();">x</span>
+                    <p id = 'AfterTest'></p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

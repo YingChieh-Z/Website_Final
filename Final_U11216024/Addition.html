@@ -1,0 +1,126 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href = "CSS_Addition.css">
+        <title>二元一次方程式學習網頁</title>
+        <script>     
+            window.onload = function() {
+                // 讀取進度比例
+                const progressRate = localStorage.getItem("progress_rate");
+                // 若無儲存進度，則預設為 0%
+                let progress = progressRate ? parseInt(progressRate) : 0;
+            
+                // 更新進度
+                updateProgress(progress);
+
+                // 更新進度條
+                updateProgressBar(progress);
+
+                var UserName = document.getElementById("UserName");
+                UserName.innerHTML = localStorage.getItem("username");
+                var content1 = document.getElementById("content1");
+                var content2 = document.getElementById("content2");
+                content1.innerHTML = "二元一次方程式的幾何意義";
+                content2.innerHTML = "<iframe src = https://www.liveism.com/live-concept.php?q=%E4%BA%8C%E5%85%83%E4%B8%80%E6%AC%A1%E8%81%AF%E7%AB%8B%E6%96%B9%E7%A8%8B%E5%BC%8F%E7%9A%84%E5%B9%BE%E4%BD%95%E6%84%8F%E7%BE%A9 style = 'width: 100%; height: 100%; border: none;'><iframe>";
+            }
+
+            // 使用者大頭貼和文字的選單
+            document.addEventListener('DOMContentLoaded', () => {
+                const userMenu = document.querySelector('.user-menu');
+                const menu = document.querySelector('.user-menu .menu');
+
+                let timer;
+
+                userMenu.addEventListener("mouseenter", () => {
+                    clearTimeout(timer);
+                    menu.style.display = "block";
+                });
+
+                userMenu.addEventListener("mouseleave", () => {
+                    timer = setTimeout(() => {
+                        menu.style.display = "none";
+                    }, 200); // 延遲 200ms 防止不穩定
+                });
+
+                menu.addEventListener("mouseenter", () => {
+                    clearTimeout(timer);
+                    menu.style.display = "block";
+                });
+
+                menu.addEventListener("mouseleave", () => {
+                    timer = setTimeout(() => {
+                        menu.style.display = "none";
+                    }, 200);
+                });
+            });
+            
+            // 登出
+            function leave() {
+                var confirmLogout = confirm("你確定要登出嗎?"); 
+                if(confirmLogout) {
+                    window.location.href = "Login.html"; 
+                }
+            }
+ 
+            
+            function updateProgress(progress) {
+                localStorage.setItem("progress", progress); // 保存進度
+                const progressBar = document.getElementById("ProgressBar");
+                const progressPercentage = document.getElementById("ProgressPercentage");
+
+                // 更新進度條寬度
+                progressBar.style.width = progress + "%";
+
+                // 更新百分比文字
+                progressPercentage.innerText = progress + "%";
+
+                // 判斷是否為100%
+                if (progress >= 100) {
+                    progressBar.classList.add("full"); // 添加 full 類
+                } 
+                else {
+                    progressBar.classList.remove("full"); // 移除 full 類（非100%情況）
+                }
+            }
+
+            function updateProgressBar(progress) {
+                const progressBar = document.getElementById("ProgressBar");
+
+                // 設定進度條寬度（比例）
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                    progressBar.style.backgroundColor = "#a1f5d7"; // 設定進度條顏色
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>二元一次方程式</h1>
+            <div class="header-right">
+                <div class="progress-bar-container-wrapper">
+                    <span class="progress-label">學習進度：</span> <!-- 新增的標籤，放在容器外 -->
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="ProgressBar"></div>
+                        <span class="progress-percentage" id="ProgressPercentage">0%</span>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <img src="User.png">
+                    <span id="UserName">U123</span>
+                    <div class="menu">
+                        <a href="Record.html">學習記錄</a>
+                        <a href="Addition.html">補充資料</a>
+                        <a href="#" onclick="leave();">登出</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <button class = "Back" onclick = "window.location = 'HomePage.html';">回主頁</button>
+            <div class = "Title">補充資料</div>
+            <div id = "content1"></div>
+            <div id = "content2"></div>
+        </div>
+    </body>
+</html>

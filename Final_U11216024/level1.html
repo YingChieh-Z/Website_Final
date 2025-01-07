@@ -1,0 +1,220 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href = "CSS_Level1.css">
+        <title>二元一次方程式學習網頁</title>
+        <script>
+            var index;
+            var arr1 = [ "定義<br>",
+                         "重要名詞解釋<br>",
+                         "課後回顧練習<br>"];
+            var arr2 = [ "<ul>在解決數學問題的時候，根據題目的要求，列出相關的代數式來做運算，<br>而且代數式裡面會含有2種未知數（二元），次數為1次（一次），<br>所以被稱為二元一次方程式。<br><br>而二元一次聯立方程式，就是將2個二元一次方程式並列，來表達題目裡面的數量關係；<br>如果能夠同時讓一組二元一次聯立方程式成立的話，就是這兩個方程式的一組共同解。</ul><br>",
+                         "<ul><li>二元一次方程式：<br>&ensp;&ensp;兩個未知數或文字符號所組成的等式，如較常見的x、y。</li><br><li>聯立：<br>&ensp;&ensp;代表2者之間有交集、關聯，稱為聯立，也代表說二元一次聯立方程式之間有共同的解。</li><br><li>共同解：<br>&ensp;&ensp;把未知數的特定值代入所有方程式中，所有方程式皆成立，就稱為有共同解。</li></ul><br>",
+                         "<ul>二元一次方程式有<input type = 'text' id = 'ans1'>個未知數，次數皆為<input type = 'text' id = 'ans2'>次。<ul><button id = 'check' onclick = 'check();'>檢查答案</button>"];
+                     
+            window.onload = function() {
+                var UserName = document.getElementById("UserName");
+                UserName.innerHTML = localStorage.getItem("username");
+                // 讀取進度比例
+                const progressRate = localStorage.getItem("progress_rate");
+                // 若無儲存進度，則預設為 0%
+                let progress = progressRate ? parseInt(progressRate) : 0;
+            
+                // 更新進度
+                updateProgress(progress);
+
+                // 更新進度條
+                updateProgressBar(progress);
+
+                document.getElementById('next').disabled = false;
+                document.getElementById('prev').disabled = true;
+                index = 0;
+                show();
+            }
+
+            // 使用者大頭貼和文字的選單
+            document.addEventListener('DOMContentLoaded', () => {
+                const userMenu = document.querySelector('.user-menu');
+                const menu = document.querySelector('.user-menu .menu');
+
+                let timer;
+
+                userMenu.addEventListener("mouseenter", () => {
+                    clearTimeout(timer);
+                    menu.style.display = "block";
+                });
+
+                userMenu.addEventListener("mouseleave", () => {
+                    timer = setTimeout(() => {
+                        menu.style.display = "none";
+                    }, 200); // 延遲 200ms 防止不穩定
+                });
+
+                menu.addEventListener("mouseenter", () => {
+                    clearTimeout(timer);
+                    menu.style.display = "block";
+                });
+
+                menu.addEventListener("mouseleave", () => {
+                    timer = setTimeout(() => {
+                        menu.style.display = "none";
+                    }, 200);
+                });
+            });
+            
+            // 登出
+            function leave() {
+                var confirmLogout = confirm("你確定要登出嗎?"); 
+                if(confirmLogout) {
+                    window.location.href = "Login.html";
+                }
+            }
+
+            // 模態視窗顯示與關閉（隱藏）
+            function showModal() {
+                document.getElementById("Modal").style.display = "flex"; 
+            }
+
+            function closeModal() {
+                document.getElementById("Modal").style.display = "none"; 
+            }
+
+            function showModal_check() {
+                document.getElementById("Modal-check").style.display = "flex"; 
+            }
+
+            function closeModal_check() {
+                document.getElementById("Modal-check").style.display = "none";
+            }
+
+            // 顯示內容
+            function show() {
+                var content1 = document.getElementById("content1");
+                var content2 = document.getElementById("content2");
+                content1.innerHTML = arr1[index];
+                content2.innerHTML = arr2[index];
+            }
+
+            // 下一頁
+            function next() {
+                index++;
+                if((index + 1) > arr1.length - 1){
+                    document.getElementById('next').disabled = true;
+                    show();
+                }
+                else{
+                    document.getElementById('next').disabled = false;
+                    document.getElementById('prev').disabled = false;
+                    show();
+                }
+                show();
+            }
+
+            // 上一頁
+            function prev() {
+                index--;
+                if((index - 1) < 0){
+                    document.getElementById('prev').disabled = true;
+                    show();
+                }
+                else{
+                    document.getElementById('prev').disabled = false;
+                    document.getElementById('next').disabled = false;
+                    show();
+                }
+                show();
+            }
+
+            // 檢查答案
+            function check() {
+                var ans1 = document.getElementById('ans1').value;
+                var ans2 = document.getElementById('ans2').value;
+                if(ans1 == '2' && ans2 == '1'){
+                    document.getElementById('check').disabled = true;
+                    document.getElementById('respond').innerHTML = "答對囉！<br><button id = 'Correct_And_goBack' onclick = \"window.location = 'HomePage.html';\">回主頁</button><button id = 'Correct_And_goNext' onclick = \"window.location = 'level2.html';\">下一關</button>";
+                    localStorage.setItem("progress_rate", "20%");
+                    showModal_check();
+                }
+                else{
+                    document.getElementById('check').disabled = false;
+                    document.getElementById('respond').innerHTML = "答案不對，再試試看吧！<br><br>提示：<br>想想看<b>【二】元【一】次方程式</b>名稱由來";
+                    showModal_check();
+                }
+            }
+            
+            function updateProgress(progress) {
+                localStorage.setItem("progress", progress); // 保存進度
+                const progressBar = document.getElementById("ProgressBar");
+                const progressPercentage = document.getElementById("ProgressPercentage");
+
+                // 更新進度條寬度
+                progressBar.style.width = progress + "%";
+
+                // 更新百分比文字
+                progressPercentage.innerText = progress + "%";
+
+                // 判斷是否為100%
+                if (progress >= 100) {
+                    progressBar.classList.add("full"); // 添加 full 類
+                } 
+                else {
+                    progressBar.classList.remove("full"); // 移除 full 類（非100%情況）
+                }
+            }
+
+            function updateProgressBar(progress) {
+                const progressBar = document.getElementById("ProgressBar");
+
+                // 設定進度條寬度（比例）
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                    progressBar.style.backgroundColor = "#a1f5d7"; // 設定進度條顏色
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>二元一次方程式</h1>
+            <div class="header-right">
+                <div class="progress-bar-container-wrapper">
+                    <span class="progress-label">學習進度：</span> <!-- 新增的標籤，放在容器外 -->
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="ProgressBar"></div>
+                        <span class="progress-percentage" id="ProgressPercentage">0%</span>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <img src="User.png">
+                    <span id="UserName">U123</span>
+                    <div class="menu">
+                        <a href="Record.html">學習記錄</a>
+                        <a href="Addition.html">補充資料</a>
+                        <a href="#" onclick="leave();">登出</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <button class = "Back" onclick = "window.location = 'HomePage.html';">回主頁</button>
+            <div class = "Title">概念簡介</div>
+            <div id = "content1"></div>
+            <div id = "content2"></div>
+            <button id = "prev" onclick = "prev();">上一頁</button>
+            <button id = "next" onclick = "next();">下一頁</button>
+            <div class = "image-Alien" onclick = "showModal();"></div>
+            <div id = "Modal" class = "modal">
+                <div class = "modal-content">
+                    <span class = "close" onclick = "closeModal();">x</span>
+                    <p>基礎概念好，學習沒煩惱！</p>
+                </div>
+            </div>
+            <div id = "Modal-check" class = "modal-check">
+                <div class = "modal-content">
+                    <span class = "close" onclick = "closeModal_check();">x</span>
+                    <p id = 'respond'></p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,122 @@
+
+<html>
+    <head>
+        <link rel = "stylesheet" href = "CSS_Login.css">
+        <title>二元一次方程式學習網頁</title>
+        <script>
+            let UserData_ID = [];
+            let UserData_Password = [];
+
+            function show_hide(){
+                var login = document.getElementById("container1");
+                var signup = document.getElementById("container2");
+
+                if (login.style.display == "none") {
+                    login.style.display = "block";  // lonin出現
+                    signup.style.display = "none";  // signup消失
+                    document.getElementById("ID1").value="";
+                    document.getElementById("Password1").value="";
+                } 
+                else {
+                    login.style.display = "none";   // login消失
+                    signup.style.display = "block"; // signup出現
+                    signup.style.visibility="visible";
+                
+                    document.getElementById("ID2").value="";
+                    document.getElementById("Password2").value="";
+                    document.getElementById("Password2_comfirm").value="";
+                }
+            }
+
+            function Judge(){
+                var tmp_ID = document.getElementById("ID1").value;
+                var tmp_Password = document.getElementById("Password1").value;
+                // 未輸入帳號
+                if(!tmp_ID.trim()){
+                    alert("請輸入帳號！");
+                }
+                // 未輸入密碼
+                else if(!tmp_Password.trim()){
+                    alert("請輸入密碼！");
+                }
+                else{
+                    let userIndex = UserData_ID.indexOf(tmp_ID);
+                    if(userIndex == -1){
+                        alert("您尚未註冊帳號！");
+                        show_hide();
+                    }
+                    else if(UserData_Password[userIndex] == tmp_Password){
+                        localStorage.setItem("username", tmp_ID);
+                        localStorage.setItem("loginTime", new Date());
+                        localStorage.setItem("progress_rate", "0%");
+                        window.location = 'HomePage.html';
+                    }
+                    else alert("密碼輸入錯誤，請重新輸入！");
+                }
+            }
+
+            function SignUp() {
+                let newID = document.getElementById("ID2").value.trim();
+                let newPassword = document.getElementById("Password2").value;
+                let confirmPassword = document.getElementById("Password2_comfirm").value;
+
+                if (!newID) {
+                    alert("請輸入帳號！");
+                } 
+                else if (!newPassword) {
+                    alert("請輸入密碼！");
+                } 
+                else if (!confirmPassword) {
+                    alert("請輸入確認密碼！");
+                } 
+                else if (newPassword !== confirmPassword) {
+                    alert("兩次輸入的密碼不一致！");
+                } 
+                else if (UserData_ID.indexOf(newID) !== -1) {
+                    alert("此帳號已被註冊！");
+                } 
+                else {
+                    UserData_ID.push(newID);
+                    UserData_Password.push(newPassword);
+                    alert("註冊成功！");
+                    show_hide();
+                }
+            }
+            
+
+        </script>
+    </head>
+    <body>
+        <div class="LoginPage">
+            <div id="container1">
+                <div class="login">
+                    <h2>二元一次方程式學習網頁</h2>
+                    <h3>登入</h3>
+                    <input type="text" id="ID1" placeholder="帳號">
+                    <div class="tab"></div>
+                    <input type="password" id="Password1" placeholder="密碼">
+                    <div class="tab"></div>
+                    <input type="button" id="submit1" value="登入" onclick="Judge();">
+                    <div class="tab"></div>
+                    <font color = "#ffffff">尚未註冊？</font><h5 onclick="show_hide();">註冊帳號</h5></h5>
+                </div>
+            </div>
+        </div>
+        <div class="SignupPage">
+            <div id="container2">
+                <div class="signup">
+                    <h3>註冊</h3>
+                    <input type="text" id="ID2" placeholder="帳號">
+                    <div class="tab"></div>
+                    <input type="password" id="Password2" placeholder="密碼">
+                    <div class="tab"></div>
+                    <input type="password" id="Password2_comfirm" placeholder="確認密碼">
+                    <div class="tab"></div>
+                    <input type="button" id="submit2" value="註冊" onclick="SignUp();">
+                    <div class="tab"></div>
+                    <h5 onclick="show_hide();">登入帳號</h5>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

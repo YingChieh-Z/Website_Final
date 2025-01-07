@@ -1,0 +1,204 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url("background.png");
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #2b314a;
+    color: #ffffff;
+    z-index: 1000; /* 確保 header 位於其他元素之上 */
+}
+
+header h1 {
+    margin: 0;
+    font-family: "Trebuchet MS", sans-serif;
+}
+
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 35px; /* 進度條與大頭貼之間的間距 */
+}
+
+.progress-bar-container-wrapper {
+    display: flex;
+    align-items: center; /* 垂直置中 */
+}
+
+.progress-label {
+    font-size: 16px; /* 調整字體大小 */
+    color: #ffffff; /* 字體顏色（可根據需求調整） */
+    margin-right: 3px; /* 與進度條的間距 */
+}
+
+.progress-bar-container {
+    display: flex;
+    align-items: center; /* 垂直對齊 */
+    width: 200px; /* 調整進度條的寬度 */
+    height: 30px; /* 進度條的高度 */
+    background-color: #4f5575; /* 背景顏色 */
+    border-radius: 25px; /* 圓角 */
+    overflow: hidden; /* 確保進度條不會溢出 */
+    margin-left: 10px; /* 與左側文字標題適當間距 */
+    position: relative; /* 便於定位百分比 */
+}
+
+.progress-bar {
+    height: 100%; /* 與容器高度一致 */
+    background-color: #4ecca3; /* 進度條顏色 */
+    transition: width 0.3s ease; /* 平滑過渡效果 */
+}
+
+/* 進度百分比 */
+.progress-percentage {
+    position: absolute;
+    right: 8px; /* 靠近進度條右邊距離 */
+    font-size: 12px;
+    color: #ffffff; /* 預設文字顏色為白色 */
+    white-space: nowrap; /* 防止折行 */
+    transition: color 0.3s ease; /* 平滑過渡文字顏色 */
+}
+
+/* 當進度條達到100%時，改變百分比文字顏色 */
+.progress-bar.full {
+    background-color: #4ecca3; 
+}
+
+.progress-bar.full + .progress-percentage {
+    color: #2b2b2b; /* 文字顏色變為深色 */
+}
+
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 2000; /* 確保 ser-menu 位於其他元素之上 */
+}
+
+.user-menu img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px; /* 讓圖片和文字有間距 */
+    cursor: pointer;
+}
+
+.user-menu #UserName {
+    font-size: 16px; 
+    color: #f6f6f6; 
+    cursor: pointer; /* 滑鼠移過時顯示指標 */
+}
+
+.user-menu .menu {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 250px;
+    background-color: #393e56;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 10;
+}
+
+/* 當滑鼠移到 user-menu 時顯示清單 */
+.user-menu:hover .menu {
+    display: block;
+}
+
+.user-menu .menu a {
+    display: block;
+    padding: 10px 20px;
+    color: #f6f6f6;
+    text-decoration: none;
+}
+
+.user-menu .menu a:hover {
+    background-color: #4ecca3;
+}
+
+.container {
+    position: relative;
+    margin: 45px auto;
+    width: 800px;
+    height: 600px;
+    background: #2b314a; 
+    border: 2px solid #4ecca3; 
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.Back {
+    width: 100px; 
+    height: 50px; 
+    background-color: #4ecca3;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+    background-size: contain; /* 確保圖片完整顯示 */
+    background-repeat: no-repeat; /* 防止重複顯示 */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    position: absolute;
+    top: 20px; 
+    left: 20px; 
+}
+
+.Back:hover{
+    background: #3da58a; /* （hover）按鈕：深綠色 */
+    transform: translateY(-2px); /* 按鈕微浮動效果 */
+}
+
+.Title {
+    color: #f6f6f6;
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 2.0em;
+}
+
+#content1 {
+    color: #f6f6f6;
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.7em;
+    position: absolute;
+    top: 100px; 
+    left: 75px; 
+}
+
+#content2 {
+    color: #f6f6f6;
+    margin-top: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.0em;
+    position: absolute;
+    top: 100px; 
+    left: 75px; 
+    width: 650px; 
+    height: 375px; 
+    border: 2px solid #4ecca3; 
+    border-radius: 10px;
+    overflow: hidden; /* 確保內容不超出範圍 */
+}
+
